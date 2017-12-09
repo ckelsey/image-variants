@@ -206,7 +206,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 			} catch (e) { }
 		}
 
-		if (canPresent) {
+		// if (canPresent) {
 			var presentButton = window.document.createElement('button')
 			presentButton.textContent = "VR"
 			canvasWrapper.appendChild(presentButton)
@@ -216,7 +216,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 			exitPresent.textContent = "EXIT"
 			canvasWrapper.appendChild(exitPresent)
 			exitPresent.addEventListener('click', onNormalScene, false)
-		}
+		// }
 
 		if (typeof imageItem === "string") {
 			let newimg = new window.Image()
