@@ -1,0 +1,20 @@
+{
+	"apps": [
+		{
+			"name": "image-variants",
+			"script": "app.js",
+			"env": {
+				"NODE_ENV": "local"
+			},
+			"env_development": {
+				"NODE_ENV": "development"
+			},
+			"env_production": {
+				"NODE_ENV": "production"
+			},
+			"env_staging": {
+				"NODE_ENV": "staging"
+			}
+		}
+	]
+}

@@ -1,0 +1,414 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Image variants upload test</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width">
+	<style>
+		html {
+			background-color: #eee;
+			color: #555;
+		}
+
+		body {
+			font-family: sans-serif;
+			margin: 0px;
+		}
+
+		img {
+			width: 70px;
+			vertical-align: middle;
+			display: inline-block;
+			margin: 0px 7px;
+		}
+
+		p {
+			font-size: 12px;
+		}
+
+		#canvas_outer {
+			width: 100vw;
+			height: 70vh;
+			max-width: 100%;
+			position: relative;
+		}
+
+		#canvas_wrapper {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+	<style>
+		#crop-positioner {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			opacity: 1;
+			top: 0px;
+			left: 0px;
+			pointer-events: none;
+			display: none;
+			transition: opacity .2s;
+		}
+
+		#crop-positioner table {
+			width: 100%;
+			height: 100%;
+			border-collapse: collapse;
+		}
+
+		#crop-positioner table td {
+			background: rgba(0, 0, 0, .42);
+			pointer-events: all;
+		}
+
+		#crop-positioner table td#revealed-space {
+			pointer-events: none;
+		}
+
+		#crop-positioner table td .handle {
+			background: rgba(200, 200, 200, .75);
+			box-shadow: inset 0px 0px 0px 1px rgba(50, 50, 50, .75);
+			width: 10px;
+			height: 10px;
+			position: relative;
+			border-radius: 2px;
+			transition: transform .2s;
+		}
+
+		#crop-positioner table td:hover .handle {
+			transform: scale(1.2);
+		}
+
+		.positioner-cutout {
+			position: absolute;
+			background: rgba(62, 62, 62, 0.7);
+			display: flex;
+			pointer-events: all;
+		}
+
+		.positioner-cutout.cutout-top,
+		.positioner-cutout.cutout-bottom {
+			width: 100%;
+			flex-direction: column;
+			left: 0px;
+			height: 10%;
+			cursor: ns-resize;
+		}
+
+		.positioner-cutout.cutout-left,
+		.positioner-cutout.cutout-right {
+			top: 0px;
+			height: 100%;
+			flex-direction: row;
+			min-width: 10px;
+			cursor: ew-resize;
+			width: 10%;
+		}
+
+		.positioner-cutout.cutout-top {
+			top: 0%;
+			justify-content: flex-end;
+		}
+
+		.positioner-cutout.cutout-bottom {
+			bottom: 0%;
+			justify-content: flex-start;
+		}
+
+		.positioner-cutout.cutout-left {
+			justify-content: flex-end;
+			left: 0%;
+		}
+
+		.positioner-cutout.cutout-right {
+			justify-content: flex-start;
+			right: 0%;
+		}
+
+		.cutout-top .cutout-handle,
+		.cutout-bottom .cutout-handle,
+		.cutout-left .cutout-handle,
+		.cutout-right .cutout-handle {
+			border-color: rgba(176, 176, 176, 0.38);
+			border-style: dotted;
+			border-width: 0px;
+		}
+
+		.cutout-top .cutout-handle,
+		.cutout-bottom .cutout-handle {
+			width: 100%;
+			height: 5px;
+		}
+
+		.cutout-top .cutout-handle {
+			border-bottom-width: 1px;
+		}
+
+		.cutout-bottom .cutout-handle {
+			border-top-width: 1px;
+		}
+
+		.cutout-left .cutout-handle,
+		.cutout-right .cutout-handle {
+			width: 5px;
+			height: 100%;
+		}
+
+		.cutout-left .cutout-handle {
+			border-right-width: 1px;
+		}
+
+		.cutout-right .cutout-handle {
+			border-left-width: 1px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="canvas_outer">
+		<div id="canvas_wrapper"></div>
+		<div id="crop-positioner">
+			<table>
+				<tr>
+					<td></td>
+					<td style="width:10px;"></td>
+					<td id="north-space" style="height: 10%;"></td>
+					<td style="width:10px"></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td style="height:10px"></td>
+					<td id="north-west-handle" style="height:10px;cursor: nwse-resize;border-top: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;border-left: 1px dotted rgba(255, 255, 255, 0.25);">
+						<div class="handle" style="left: -5px; top: -5px;"></div>
+					</td>
+					<td id="north-handle" style="height:10px; background: transparent; cursor: ns-resize; border-top: 1px dotted rgba(255, 255, 255, 0.25);">
+						<div class="handle" style="left: 50%; top: -5px; margin-left: -5px;"></div>
+					</td>
+					<td id="north-east-handle" style="height:10px;cursor: nesw-resize;border-top: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;border-right: 1px dotted rgba(255, 255, 255, 0.25);">
+						<div class="handle" style="left: 5px; top: -5px;"></div>
+					</td>
+					<td style="height:10px"></td>
+				</tr>
+				<tr>
+					<td id="west-space" style="width: 10%;"></td>
+					<td id="west-handle" style="cursor: ew-resize;border-left: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;">
+						<div class="handle" style="left: -5px; top: 50%; margin-top: -5px;"></div>
+					</td>
+					<td id="revealed-space" style="background: transparent;"></td>
+					<td id="east-handle" style="cursor: ew-resize;border-right: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;">
+						<div class="handle" style="right: -5px;top: 50%; margin-top: -5px;"></div>
+					</td>
+					<td id="east-space" style="width: 10%;"></td>
+				</tr>
+				<tr>
+					<td style="height:10px"></td>
+					<td id="south-west-handle" style="height:10px;cursor: nesw-resize; background: transparent; border-bottom: 1px dotted rgba(255, 255, 255, 0.25); border-left: 1px dotted rgba(255, 255, 255, 0.25);">
+						<div class="handle" style="left: -5px; top: 5px;"></div>
+					</td>
+					<td id="south-handle" style="height:10px; cursor: ns-resize; border-bottom: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;">
+						<div class="handle" style="left: 50%; top: 5px; margin-left: -5px;"></div>
+					</td>
+					<td id="south-east-handle" style="height:10px;cursor: nwse-resize;background: transparent; border-bottom: 1px dotted rgba(255, 255, 255, 0.25); border-right: 1px dotted rgba(255, 255, 255, 0.25);">
+						<div class="handle" style="left: 5px; top: 5px;"></div>
+					</td>
+					<td style="height:10px"></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td id="south-space" style="height: 10%;"></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div>
+		<input type="file" id="file_input" style="background: #fff; padding: 7px;">
+		<span id="status"></span>
+		<button id="upload" style="display: none;">Upload</button>
+	</div>
+	<div id="dimensions" style="display: none; align-items: center; justify-content: space-evenly; background: #dcdcdc;">
+		<p>Pan:
+			<b id="pan"></b>
+		</p>
+		<p>Tilt:
+			<b id="tilt"></b>
+		</p>
+		<p>Zoom:
+			<b id="zoom"></b>
+		</p>
+		<p>Source width:
+			<b id="source_width"></b>
+		</p>
+		<p>Source height:
+			<b id="source_height"></b>
+		</p>
+		<p>View width:
+			<b id="view_width"></b>
+		</p>
+		<p>View height:
+			<b id="view_height"></b>
+		</p>
+		<p>X1:
+			<b id="x1">10%</b>
+		</p>
+		<p>X2:
+			<b id="x2">10%</b>
+		</p>
+		<p>Y1:
+			<b id="y1">10%</b>
+		</p>
+		<p>Y2:
+			<b id="y2">10%</b>
+		</p>
+	</div>
+	<div id="images" style="display: none; align-items: center; justify-content: space-evenly">
+		<p>Large:
+			<span id="large_url"></span>
+		</p>
+		<p>Small:
+			<span id="small_url"></span>
+		</p>
+		<p>Thumb:
+			<span id="thumb_url"></span>
+		</p>
+	</div>
+	<script src="http://localhost:13463/uploadjs/three.min.js"></script>
+	<script src="http://localhost:13463/uploadjs/exif.js"></script>
+	<script src="http://localhost:13463/uploadjs/png.js"></script>
+	<script src="http://localhost:13463/uploadjs/fabric.min.js"></script>
+	<script src="http://localhost:13463/uploadjs/image-reader.js"></script>
+	<script src="http://localhost:13463/uploadjs/getThis.js"></script>
+	<script src="http://localhost:13463/uploadjs/getMeta.js"></script>
+	<script src="http://localhost:13463/uploadjs/draw2d.js"></script>
+	<script src="http://localhost:13463/uploadjs/draw3d.js"></script>
+	<script src="http://localhost:13463/uploadjs/draw360.js"></script>
+	<script src="http://localhost:13463/uploadjs/uploader.js"></script>
+	<script src="http://localhost:13463/uploadjs/cropper.js"></script>
+	<script>
+		var input = document.getElementById("file_input")
+		var uploadBtn = document.getElementById("upload")
+		var large = document.getElementById("large_url")
+		var small = document.getElementById("small_url")
+		var thumb = document.getElementById("thumb_url")
+		var statusMessage = document.getElementById("status")
+		var panText = document.getElementById("pan")
+		var tiltText = document.getElementById("tilt")
+		var zoomText = document.getElementById("zoom")
+		var sourceWidthText = document.getElementById("source_width")
+		var sourceHeightText = document.getElementById("source_height")
+		var viewWidthText = document.getElementById("view_width")
+		var viewHeightText = document.getElementById("view_height")
+		var x1Text = document.getElementById("x1")
+		var x2Text = document.getElementById("x2")
+		var y1Text = document.getElementById("y1")
+		var y2Text = document.getElementById("y2")
+		var dimensions = document.getElementById("dimensions")
+		var images = document.getElementById("images")
+		var x1 = 10, x2 = 10, y1 = 10, y2 = 10, sourceHeight,sourceWidth,viewHeight,viewWidth,pan,tilt,zoom
+
+		function drawCanvas(file) {
+
+			images.style.display = "none"
+			statusMessage.textContent = "Getting metadata"
+
+			getMetadata(file).then(function (meta) {
+
+				statusMessage.textContent = "Drawing"
+				var method = null
+				var canvasWrapper = document.getElementById("canvas_wrapper")
+				var new_canvasWrapper = canvasWrapper.cloneNode(true);
+				canvasWrapper.parentNode.replaceChild(new_canvasWrapper, canvasWrapper);
+
+				if (meta["360"]) {
+					method = draw360(file, new_canvasWrapper)
+				} else if (meta["3d"]) {
+					method = draw3D(file, new_canvasWrapper, true)
+				} else {
+					method = draw2D(file, new_canvasWrapper, true)
+				}
+
+				method.then(function (onUpdate) {
+
+					statusMessage.textContent = ""
+					uploadBtn.style.display = "inline"
+					dimensions.style.display = "flex"
+
+					onUpdate(function (data) {
+
+						pan = panText.textContent = data.pan.toFixed(2)
+						tilt = tiltText.textContent = data.tilt.toFixed(2)
+						zoom = zoomText.textContent = data.zoom.toFixed(2)
+						sourceHeight = sourceHeightText.textContent = Math.round(data.sourceHeight)
+						sourceWidth = sourceWidthText.textContent = Math.round(data.sourceWidth)
+						viewHeight = viewHeightText.textContent = Math.round(data.viewHeight)
+						viewWidth = viewWidthText.textContent = Math.round(data.viewWidth)
+					})
+				})
+			}, function () {
+
+				statusMessage.textContent = "Not a valid GeForce image"
+				uploadBtn.style.display = "none"
+				dimensions.style.display = "none"
+				input.value = null
+			})
+		}
+
+		input.addEventListener("change", function () {
+
+			drawCanvas(this.files[0])
+			cropper.show()
+		}, false)
+
+		uploadBtn.addEventListener("click", function () {
+			uploadBtn.style.display = "none"
+
+			upload(input.files[0], {
+
+				x1, x2, y1, y2,
+				sourceHeight,sourceWidth,
+				viewHeight, viewWidth,
+				pan, tilt, zoom
+
+			}, function (uploaded) {
+
+				statusMessage.textContent = "Uploading " + uploaded + "%"
+
+			}).then(function (res) {
+
+				statusMessage.textContent = ""
+				uploadBtn.style.display = "none"
+				images.style.display = "flex"
+				large.innerHTML = `<a target="_blank" href="` + res.result.urls.large + `"><img src="` + res.result.urls.large + `"></a>`
+				small.innerHTML = `<a target="_blank" href="` + res.result.urls.small + `"><img src="` + res.result.urls.small + `"></a>`
+				thumb.innerHTML = `<a target="_blank" href="` + res.result.urls.thumb + `"><img src="` + res.result.urls.thumb + `"></a>`
+
+			}, function (err) {
+
+				uploadBtn.style.display = "none"
+				statusMessage.textContent = "Error " + JSON.stringify(err)
+
+			})
+		}, false)
+
+		cropper.init(document.getElementById("crop-positioner"))
+
+		cropper.onUpdate(function (data) {
+			x1 = data.x1
+			x2 = data.x2
+			y1 = data.y1
+			y2 = data.y2
+			x1Text.textContent = data.x1.toFixed(2) + "%"
+			x2Text.textContent = data.x2.toFixed(2) + "%"
+			y1Text.textContent = data.y1.toFixed(2) + "%"
+			y2Text.textContent = data.y2.toFixed(2) + "%"
+		})
+
+	</script> </body>
+
+</html>

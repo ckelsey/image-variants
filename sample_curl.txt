@@ -1,0 +1,6 @@
+curl -F "partindex=0" -F "totalfilesize=6313802" -F "totalparts=1" -F "id=anid" -F "image=@/Users/chriskelsey/Downloads/1.jpg" http://localhost:13463/v1/image?done=1
+
+
+curl -F "partindex=0" -F "totalfilesize=61590132" -F "totalparts=1" -F "id=anid" -F "image=@/Users/chriskelsey/Downloads/AnselOutputs/The Witcher 3 360-Stereo 2016.10.27 - 17.11.01.88.jpg" http://localhost:13463/v1/image?done=1
+
+curl -F "partindex=0" -F "totalfilesize=6576480" -F "totalparts=1" -F "id=anid" -F "image=@/Users/chriskelsey/Downloads/AnselOutputs/The Witcher 3 360 2016.10.27 - 17.10.48.82.jpg" http://localhost:13463/v1/image?done=1
