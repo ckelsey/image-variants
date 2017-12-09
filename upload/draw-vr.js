@@ -3,7 +3,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 		var glAttribs = {
 			antialias: true,
 		}
-		console.log(window);
+
 		var frameData = new window.VRFrameData()
 		var vrDisplay
 		var normalSceneFrame
@@ -186,19 +186,11 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 
 
 
-		// var present = function () {
-		// 	vrDisplay.requestPresent([{ source: canvas }]).then(function () {
-		// 		onPresent()
-		// 	})
-		// }
-
-
-
-		// scope.fullscreen = function () {
-		// 	window.parent.document.getElementById("ansel_viewer_frame").classList.toggle("in-vr-mode")
-		// 	Events.toggleFullscreen()
-		// }
-
+		var present = function () {
+			vrDisplay.requestPresent([{ source: canvas }]).then(function () {
+				onPresent()
+			})
+		}
 
 
 		if (window.navigator.getVRDisplays) {
@@ -217,11 +209,12 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 			let newimg = new window.Image()
 			newimg.onload = function () {
 				setImages(newimg).then(function () {
-					if (isPresenting) {
-						onPresent()
-					} else {
-						onNormalScene()
-					}
+					onPresent()
+					// if (isPresenting) {
+					// 	onPresent()
+					// } else {
+					// 	onNormalScene()
+					// }
 
 					respond(subscribe)
 				})
@@ -230,11 +223,12 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 		} else {
 			window.imageReader(imageItem).then(function (newimg) {
 				setImages(newimg.img).then(function () {
-					if (isPresenting) {
-						onPresent()
-					} else {
-						onNormalScene()
-					}
+					onPresent()
+					// if (isPresenting) {
+					// 	onPresent()
+					// } else {
+					// 	onNormalScene()
+					// }
 					respond(subscribe)
 				})
 			})
