@@ -112,7 +112,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 				isPresenting = true
 
 				window.cancelAnimationFrame(normalSceneFrame)
-				window.parent.document.getElementById("ansel_viewer_frame").classList.add("in-vr-mode")
+				// window.parent.document.getElementById("ansel_viewer_frame").classList.add("in-vr-mode")
 
 				positionCanvas()
 
