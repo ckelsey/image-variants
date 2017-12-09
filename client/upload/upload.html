@@ -278,18 +278,30 @@
 			<span id="thumb_url"></span>
 		</p>
 	</div>
-	<script src="/uploadjs/three.min.js"></script>
-	<script src="/uploadjs/exif.js"></script>
-	<script src="/uploadjs/png.js"></script>
-	<script src="/uploadjs/fabric.min.js"></script>
-	<script src="/uploadjs/image-reader.js"></script>
 	<script src="/uploadjs/getThis.js"></script>
-	<script src="/uploadjs/getMeta.js"></script>
-	<script src="/uploadjs/draw2d.js"></script>
-	<script src="/uploadjs/draw3d.js"></script>
-	<script src="/uploadjs/draw360.js"></script>
-	<script src="/uploadjs/uploader.js"></script>
-	<script src="/uploadjs/cropper.js"></script>
+
+	<script src="/uploadjs/viewer/lib/webvr-polyfill.js"></script>
+	<script src="/uploadjs/viewer/lib/gl-matrix-min.js"></script>
+	<script src="/uploadjs/viewer/lib/wglu-program.js"></script>
+	<script src="/uploadjs/viewer/lib/vr-panorama.js"></script>
+	<script src="/uploadjs/viewer/lib/three.min.js"></script>
+	<script src="/uploadjs/viewer/lib/fabric.min.js"></script>
+
+	<script src="/uploadjs/viewer/draw2d.js"></script>
+	<script src="/uploadjs/viewer/draw3d.js"></script>
+	<script src="/uploadjs/viewer/draw360.js"></script>
+	<script src="/uploadjs/viewer/draw-vr.js"></script>
+
+	<script src="/uploadjs/meta/lib/exif.js"></script>
+	<script src="/uploadjs/meta/lib/png.js"></script>
+	<script src="/uploadjs/meta/getMeta.js"></script>
+
+
+	<script src="/uploadjs/upload/image-reader.js"></script>
+	<script src="/uploadjs/upload/cropper.js"></script>
+	<script src="/uploadjs/upload/uploader.js"></script>
+
+
 	<script>
 		var input = document.getElementById("file_input")
 		var uploadBtn = document.getElementById("upload")

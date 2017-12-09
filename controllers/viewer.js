@@ -2,7 +2,7 @@ const fs = require("fs")
 
 module.exports = function (res) {
 
-	var fileStream = fs.createReadStream("./upload/viewer.html")
+	var fileStream = fs.createReadStream("./client/viewer/viewer.html")
 	fileStream.on("open", function () {
 		res.setHeader("Content-Type", "text/html")
 		fileStream.pipe(res)

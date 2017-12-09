@@ -3,7 +3,7 @@ const path = require("path")
 
 module.exports = function (res, headers, body, query, params, files) {
 
-	var fileStream = fs.createReadStream("./upload" + params.url)
+	var fileStream = fs.createReadStream("./client" + params.url)
 	fileStream.on("open", function () {
 		res.setHeader("Content-Type", "text/javascript")
 		fileStream.pipe(res)
