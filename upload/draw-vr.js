@@ -21,6 +21,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 		var gl = canvas.getContext("webgl", glAttribs)
 		var isPresenting = false
 		var canPresent = false
+		var presentButton = window.document.createElement('button')
 
 		canvasWrapper.appendChild(canvas)
 
@@ -110,6 +111,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 
 
 		function onPresent() {
+			presentButton.style.display = "none"
 			setTimeout(function () {
 				isPresenting = true
 
@@ -144,6 +146,8 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 
 
 		function onNormalScene() {
+			presentButton.style.display = "block"
+
 			try {
 				vrDisplay.cancelAnimationFrame(vrSceneFrame)
 			} catch (e) { }
@@ -201,22 +205,17 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 					if (displays.length > 0) {
 						vrDisplay = displays[0]
 						canPresent = vrDisplay.capabilities.canPresent
+
+						if (canPresent) {
+							presentButton.textContent = "VR"
+							presentButton.style.position = "relative"
+							canvasWrapper.appendChild(presentButton)
+							presentButton.addEventListener('click', present, false)
+						}
 					}
 				})
 			} catch (e) { }
 		}
-
-		// if (canPresent) {
-			var presentButton = window.document.createElement('button')
-			presentButton.textContent = "VR"
-			canvasWrapper.appendChild(presentButton)
-			presentButton.addEventListener('click', present, false)
-
-			var exitPresent = window.document.createElement('button')
-			exitPresent.textContent = "EXIT"
-			canvasWrapper.appendChild(exitPresent)
-			exitPresent.addEventListener('click', onNormalScene, false)
-		// }
 
 		if (typeof imageItem === "string") {
 			let newimg = new window.Image()
