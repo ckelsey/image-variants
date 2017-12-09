@@ -87,8 +87,6 @@ window.draw3D = function (imageItem, canvasWrapper, fill) {
 				}
 			}
 
-			console.log(xOutOfBounds, yOutOfBounds, correctedX, correctedY);
-
 			return {
 				x: xOutOfBounds,
 				correctedX: correctedX,
@@ -278,9 +276,12 @@ window.draw3D = function (imageItem, canvasWrapper, fill) {
 			canvas.selection = false
 
 			if (typeof imageItem === "string") {
-				updateImage(imageItem)
-				respond(subscribe)
-				sendUpdate()
+				create2D(imageItem).then(function (img2d) {
+					image2D = img2d
+					updateImage(image2D)
+					respond(subscribe)
+					sendUpdate()
+				})
 			} else {
 				window.imageReader(imageItem).then(function (img) {
 					image3D = img.url

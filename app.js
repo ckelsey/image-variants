@@ -10,6 +10,7 @@ console.log(process.env.NODE_ENV, new Date())
 const controllers = {
 	image: require("./controllers/image"),
 	imageServe: require("./controllers/image.serve"),
+	imageTestServe: require("./controllers/test.images"),
 	upload: require("./controllers/upload"),
 	uploadJs: require("./controllers/upload_js"),
 	viewer: require("./controllers/viewer")
@@ -20,6 +21,7 @@ const controllers = {
 var routes = {
 	"get": {
 		"/v1/image": "imageServe",
+		"/v1/test": "imageTestServe",
 		"/viewer": "viewer",
 		"/upload": "upload",
 		"/uploadjs": "uploadJs"
@@ -115,6 +117,12 @@ server.on("request", (req, res) => {
 		let urlParts = url.split("/v1/image/")
 		params.url = urlParts[1]
 		url = "/v1/image"
+	}
+
+	if (method === "get" && url.includes("/v1/test/")) {
+		let urlParts = url.split("/v1/test/")
+		params.url = urlParts[1]
+		url = "/v1/test"
 	}
 
 	if (method === "get" && url.includes("/uploadjs/")) {

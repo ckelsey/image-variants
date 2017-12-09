@@ -57,6 +57,13 @@
 		<input type="file" id="file_input" style="background: #fff; padding: 7px;">
 		<span id="status"></span>
 	</div>
+	<div>
+		<a href="#" id="vr" url="/v1/test/MTUxMjg1MTEwNDkxNzExNjk1Mzkx_large.jpg">VR</a>
+		<a href="#" id="360" url="/v1/test/MTUxMjg1MTA2ODI5MzU4Nzc5NDQ_large.jpg">360</a>
+		<a href="#" id="screen" url="/v1/test/MTUxMjg1MTA0NjY5NzUwOTAxNjQ_large.jpg">Screenshot</a>
+		<a href="#" id="3d" url="/v1/test/MTUxMjg1MTEyNTM3MDE0NDkzMTM_large.jpg">3D</a>
+		<a href="#" id="super" url="/v1/test/MTUxMjg1MTY3Nzk0MjQ2NDMyNTU_large.jpg">Super resolution</a>
+	</div>
 	<script src="http://localhost:13463/uploadjs/three.min.js"></script>
 	<script src="http://localhost:13463/uploadjs/exif.js"></script>
 	<script src="http://localhost:13463/uploadjs/png.js"></script>
@@ -101,6 +108,41 @@
 				input.value = null
 			})
 		}
+
+		document.querySelectorAll("a").forEach(function(a){
+			a.addEventListener("click", function(e){
+				var type = e.target.id
+				var url = e.target.getAttribute("url")
+
+				statusMessage.textContent = "Drawing"
+				var method = null
+				var canvasWrapper = document.getElementById("canvas_wrapper")
+				var new_canvasWrapper = canvasWrapper.cloneNode(true);
+				canvasWrapper.parentNode.replaceChild(new_canvasWrapper, canvasWrapper);
+console.log(type);
+				switch(type){
+					case "vr":
+					case "360":
+					method = draw360(url, new_canvasWrapper)
+					break;
+
+					case "3d":
+					method = draw3D(url, new_canvasWrapper)
+					break;
+
+					default:
+					method = draw2D(url, new_canvasWrapper)
+					break
+
+				}
+
+				method.then(function (onUpdate) {
+
+					statusMessage.textContent = ""
+				})
+			})
+		})
+
 
 		input.addEventListener("change", function () {
 
