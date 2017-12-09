@@ -8,7 +8,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 		var vrDisplay
 		var normalSceneFrame
 		var vrSceneFrame
-		var canvas = window.document.getElementById("scene-canvas")
+		var canvas = window.document.createElement("canvas")
 		var img1 = new window.Image()
 		var img2 = new window.Image()
 		var ctxTop = window.document.createElement("canvas").getContext("2d")
@@ -19,6 +19,8 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 		var gl = canvas.getContext("webgl", glAttribs)
 		var isPresenting = false
 		var canPresent = false
+
+		canvasWrapper.appendChild(canvas)
 
 		if (!gl) {
 			gl = canvas.getContext("experimental-webgl", glAttribs)
@@ -146,7 +148,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 
 			positionCanvas()
 
-			window.parent.document.getElementById("ansel_viewer_frame").classList.remove("in-vr-mode")
+			// window.parent.document.getElementById("ansel_viewer_frame").classList.remove("in-vr-mode")
 
 			isPresenting = false
 

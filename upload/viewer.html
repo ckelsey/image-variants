@@ -64,7 +64,7 @@
 		<a href="#" id="3d" url="/v1/test/MTUxMjg1MTEyNTM3MDE0NDkzMTM_large.jpg">3D</a>
 		<a href="#" id="super" url="/v1/test/MTUxMjg1MTY3Nzk0MjQ2NDMyNTU_large.jpg">Super resolution</a>
 	</div>
-	<script src="/uploadjs/webvr.js"></script>
+	<script src="/uploadjs/webvr-polyfill.js"></script>
 	<script src="/uploadjs/gl-matrix-min.js"></script>
 	<script src="/uploadjs/wglu-program.js"></script>
 	<script src="/uploadjs/vr-panorama.js"></script>
@@ -129,7 +129,7 @@
 				console.log(type);
 				switch (type) {
 					case "vr":
-						method = drawVr(url, new_canvasWrapper)
+						method = drawVr(url, new_canvasWrapper, true)
 						break;
 					case "360":
 						method = draw360(url, new_canvasWrapper)
