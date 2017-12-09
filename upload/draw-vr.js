@@ -1,5 +1,7 @@
 window.drawVr = function (imageItem, canvasWrapper, is3D) {
 	return new Promise(function (respond) {
+		canvasWrapper.innerHTML = ""
+
 		var glAttribs = {
 			antialias: true,
 		}
@@ -204,17 +206,27 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 			} catch (e) { }
 		}
 
+		if (canPresent) {
+			var presentButton = window.document.createElement('button')
+			presentButton.textContent = "VR"
+			canvasWrapper.appendChild(presentButton)
+			presentButton.addEventListener('click', present, false)
+
+			var exitPresent = window.document.createElement('button')
+			exitPresent.textContent = "EXIT"
+			canvasWrapper.appendChild(exitPresent)
+			exitPresent.addEventListener('click', onNormalScene, false)
+		}
+
 		if (typeof imageItem === "string") {
-			// setImages(imageItem)
 			let newimg = new window.Image()
 			newimg.onload = function () {
 				setImages(newimg).then(function () {
-					onPresent()
-					// if (isPresenting) {
-					// 	onPresent()
-					// } else {
-					// 	onNormalScene()
-					// }
+					if (isPresenting) {
+						onPresent()
+					} else {
+						onNormalScene()
+					}
 
 					respond(subscribe)
 				})
@@ -223,12 +235,11 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 		} else {
 			window.imageReader(imageItem).then(function (newimg) {
 				setImages(newimg.img).then(function () {
-					onPresent()
-					// if (isPresenting) {
-					// 	onPresent()
-					// } else {
-					// 	onNormalScene()
-					// }
+					if (isPresenting) {
+						onPresent()
+					} else {
+						onNormalScene()
+					}
 					respond(subscribe)
 				})
 			})
