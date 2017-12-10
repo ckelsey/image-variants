@@ -5,7 +5,7 @@ window.draw360 = function (imageItem, canvasWrapper) {
 		var minZoom = 5,
 			maxZoom = 100,
 			zoom = 40,
-			renderer, scene, camera, texture, material, isUserInteracting, img,
+			renderer, scene, camera, texture, material, isUserInteracting, img, controls,
 			ctxTop = window.document.createElement("canvas").getContext("2d"),
 			distance = 50,
 			onPointerDownPointerX = 0,
@@ -120,6 +120,8 @@ window.draw360 = function (imageItem, canvasWrapper) {
 			camera.lookAt(camera.target)
 			camera.aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight
 			camera.updateProjectionMatrix()
+
+			controls = new window.THREE.DeviceOrientationControls(camera)
 
 			var geometry = new window.THREE.SphereGeometry(100, 100, 40)
 			geometry.applyMatrix(new window.THREE.Matrix4().makeScale(-1, 1, 1))
