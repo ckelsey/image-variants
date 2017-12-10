@@ -90,7 +90,7 @@ window.getMetadata = function(file){
 				reader = window.FileReader
 			}
 
-			reader.onload = () => {
+			reader.onload = function() {
 				var bytes = new Uint8Array(reader.result)
 				var length = bytes.byteLength
 

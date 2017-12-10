@@ -17,7 +17,7 @@ window.imageReader = function (file) {
 		var ext = file.name.split(".")
 		result.ext = ext[ext.length - 1]
 
-		reader.onload = (e) => {
+		reader.onload = function(e) {
 			var blob = new window.Blob([e.target.result], { type: result.ext })
 			result.url = domURL.createObjectURL(blob)
 

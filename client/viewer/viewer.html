@@ -121,9 +121,9 @@
 			})
 		}
 
-
-
-		document.querySelectorAll("a").forEach(function (a) {
+		var links = document.querySelectorAll("a")
+		for(var i=0;i<links.length; i++){
+			var a = links[i]
 			a.addEventListener("click", function (e) {
 				var type = e.target.id
 				var url = e.target.getAttribute("url")
@@ -157,7 +157,8 @@
 					statusMessage.textContent = ""
 				})
 			})
-		})
+		}
+
 
 
 		input.addEventListener("change", function () {

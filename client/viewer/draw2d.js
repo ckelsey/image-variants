@@ -1,3 +1,4 @@
+
 window.draw2D = function (imageItem, canvasWrapper, fill) {
 
 	canvasWrapper.innerHTML = ""
