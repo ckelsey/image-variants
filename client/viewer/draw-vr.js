@@ -13,6 +13,7 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 		var canvas = window.document.createElement("canvas")
 		var img1 = new window.Image()
 		var img2 = new window.Image()
+		var storedImg = null
 		var ctxTop = window.document.createElement("canvas").getContext("2d")
 		var ctxBottom = window.document.createElement("canvas").getContext("2d")
 		var panorama = null
@@ -167,6 +168,8 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 
 
 		function setImages(img) {
+			storedImg = img
+
 			return new Promise(function (res) {
 				if (is3D) {
 					ctxTop.canvas.width = img.naturalWidth

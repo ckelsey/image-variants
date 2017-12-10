@@ -1,11 +1,11 @@
-window.draw360 = function (imageItem, canvasWrapper) {
+window.draw360 = function (imageItem, canvasWrapper, is3D) {
 	canvasWrapper.innerHTML = ""
 
 	return new Promise(function (respond) {
 		var minZoom = 5,
 			maxZoom = 100,
 			zoom = 40,
-			renderer, scene, camera, texture, material, isUserInteracting, img, controls,
+			renderer, scene, camera, texture, material, isUserInteracting, img, storedImg, controls,
 			ctxTop = window.document.createElement("canvas").getContext("2d"),
 			distance = 50,
 			onPointerDownPointerX = 0,
@@ -16,7 +16,9 @@ window.draw360 = function (imageItem, canvasWrapper) {
 			lat = 0,
 			phi = 0,
 			theta = 0,
-			subscriptions = []
+			subscriptions = [],
+			canDoVR = false,
+			vrButton = window.document.createElement('button')
 
 
 		function subscribe(cb) {
@@ -93,7 +95,9 @@ window.draw360 = function (imageItem, canvasWrapper) {
 
 		function setImages(_img) {
 			return new Promise(function (resolve) {
-				if (_img.naturalWidth === _img.naturalHeight) {
+				storedImg = _img
+				if (_img.naturalWidth === _img.naturalHeight || is3D) {
+					is3D = true
 					ctxTop.canvas.width = _img.naturalWidth
 					ctxTop.canvas.height = _img.naturalHeight / 2
 					ctxTop.drawImage(_img, 0, 0)
@@ -102,6 +106,26 @@ window.draw360 = function (imageItem, canvasWrapper) {
 				} else {
 					img = _img
 					resolve(img)
+				}
+
+				if (window.navigator.getVRDisplays) {
+					try {
+						window.navigator.getVRDisplays().then(function (displays) {
+							if (displays.length > 0) {
+								var vrDisplay = displays[0]
+								canDoVR = vrDisplay.capabilities.canPresent
+
+								if (canDoVR) {
+									vrButton.textContent = "VR"
+									vrButton.style.position = "relative"
+									canvasWrapper.appendChild(vrButton)
+									vrButton.addEventListener('click', function () {
+										window.drawVr(storedImg, canvasWrapper, is3D)
+									}, false)
+								}
+							}
+						})
+					} catch (e) { }
 				}
 			})
 		}
@@ -162,11 +186,13 @@ window.draw360 = function (imageItem, canvasWrapper) {
 
 			canvasWrapper.addEventListener("mousedown", onDocumentMouseDown, false)
 			canvasWrapper.addEventListener("mousemove", onDocumentMouseMove, false)
-			window.document.addEventListener("mouseup", onDocumentMouseUp, false)
 			canvasWrapper.addEventListener("wheel", onDocumentMouseWheel, false)
+
+			window.document.addEventListener("mouseup", onDocumentMouseUp, false)
+			window.addEventListener("resize", resize, true)
 		}
 
-		window.addEventListener("resize", resize, true)
+
 
 		run()
 	})

@@ -139,7 +139,8 @@
 				console.log(type);
 				switch (type) {
 					case "vr":
-						method = drawVr(url, new_canvasWrapper, true)
+						// method = drawVr(url, new_canvasWrapper, true)
+						method = draw360(url, new_canvasWrapper)
 						break;
 					case "360":
 						method = draw360(url, new_canvasWrapper)
