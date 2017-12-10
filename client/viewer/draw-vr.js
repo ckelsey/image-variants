@@ -2,7 +2,11 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 	return new Promise(function (respond, reject) {
 		canvasWrapper.innerHTML = ""
 
-		if (!vrDisplay || !vrDisplay.getFrameData) {
+		var capabilities = {
+			webvr: !vrDisplay || !vrDisplay.getFrameData
+		}
+
+		if (!capabilities.webvr) {
 			return reject()
 		}
 
