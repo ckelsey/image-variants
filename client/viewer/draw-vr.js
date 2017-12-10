@@ -212,6 +212,16 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 					})
 				}
 				newimg.src = imageItem
+			} else if (imageItem instanceof window.HTMLImageElement) {
+				setImages(imageItem).then(function () {
+					if (isPresenting) {
+						onPresent()
+					} else {
+						onNormalScene()
+					}
+
+					respond(subscribe)
+				})
 			} else {
 				window.imageReader(imageItem).then(function (newimg) {
 					setImages(newimg.img).then(function () {
