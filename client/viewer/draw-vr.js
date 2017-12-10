@@ -70,17 +70,17 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 
 
 
-		function drawScene() {
-			normalSceneFrame = window.requestAnimationFrame(drawScene)
-			vrDisplay.getFrameData(frameData)
+		// function drawScene() {
+		// 	normalSceneFrame = window.requestAnimationFrame(drawScene)
+		// 	vrDisplay.getFrameData(frameData)
 
-			getPoseMatrix(viewMat, frameData.pose)
+		// 	getPoseMatrix(viewMat, frameData.pose)
 
-			gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT)
+		// 	gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT)
 
-			gl.viewport(0, 0, canvas.width, canvas.height)
-			panorama.render(frameData.leftProjectionMatrix, viewMat)
-		}
+		// 	gl.viewport(0, 0, canvas.width, canvas.height)
+		// 	panorama.render(frameData.leftProjectionMatrix, viewMat)
+		// }
 
 
 
@@ -147,18 +147,20 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 				vrDisplay.cancelAnimationFrame(vrSceneFrame)
 			} catch (e) { }
 
-			positionCanvas()
+			window.draw360(storedImg, canvasWrapper, is3D)
 
-			// window.parent.document.getElementById("ansel_viewer_frame").classList.remove("in-vr-mode")
+			// positionCanvas()
 
-			isPresenting = false
+			// // window.parent.document.getElementById("ansel_viewer_frame").classList.remove("in-vr-mode")
 
-			if (!panorama) {
-				panorama = new window.VRPanorama(gl)
-			}
+			// isPresenting = false
 
-			panorama.useImage(img1)
-			drawScene()
+			// if (!panorama) {
+			// 	panorama = new window.VRPanorama(gl)
+			// }
+
+			// panorama.useImage(img1)
+			// drawScene()
 		}
 
 

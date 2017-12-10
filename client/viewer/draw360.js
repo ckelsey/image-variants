@@ -18,6 +18,7 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 			theta = 0,
 			subscriptions = [],
 			canDoVR = false,
+			animationFrame,
 			vrButton = window.document.createElement('button')
 
 
@@ -50,7 +51,7 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 		}
 
 		function animate() {
-			window.requestAnimationFrame(animate)
+			animationFrame = window.requestAnimationFrame(animate)
 			draw()
 		}
 
@@ -120,6 +121,7 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 									vrButton.style.position = "relative"
 									canvasWrapper.appendChild(vrButton)
 									vrButton.addEventListener('click', function () {
+										window.cancelAnimationFrame(animationFrame)
 										window.drawVr(storedImg, canvasWrapper, is3D)
 									}, false)
 								}
