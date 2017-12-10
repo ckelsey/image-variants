@@ -157,6 +157,8 @@
 				method.then(function (onUpdate) {
 
 					statusMessage.textContent = ""
+				}, function(){
+					statusMessage.textContent = "This browser/device can not render this content"
 				})
 			})
 		}

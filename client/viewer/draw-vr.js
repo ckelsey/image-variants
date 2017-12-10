@@ -2,16 +2,6 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 	return new Promise(function (respond, reject) {
 		canvasWrapper.innerHTML = ""
 
-		var capabilities = {
-			webvr: !vrDisplay || !vrDisplay.getFrameData
-		}
-
-		if (!capabilities.webvr) {
-			return reject()
-		}
-
-		console.log(vrDisplay, vrDisplay.getFrameData );
-
 		var glAttribs = {
 			antialias: true,
 		}
@@ -45,8 +35,6 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 		function subscribe(cb) {
 			subscriptions.push(cb)
 		}
-
-
 
 		function getPoseMatrix(out, pose) {
 			var orientation = pose.orientation
@@ -200,11 +188,49 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 			})
 		}
 
-
-
-		var present = function () {
+		function present() {
 			vrDisplay.requestPresent([{ source: canvas }]).then(function () {
 				onPresent()
+			})
+		}
+
+		function run() {
+			if (typeof imageItem === "string") {
+				let newimg = new window.Image()
+				newimg.onload = function () {
+					setImages(newimg).then(function () {
+						if (isPresenting) {
+							onPresent()
+						} else {
+							onNormalScene()
+						}
+
+						respond(subscribe)
+					})
+				}
+				newimg.src = imageItem
+			} else {
+				window.imageReader(imageItem).then(function (newimg) {
+					setImages(newimg.img).then(function () {
+						if (isPresenting) {
+							onPresent()
+						} else {
+							onNormalScene()
+						}
+						respond(subscribe)
+					})
+				})
+			}
+
+
+			window.addEventListener("resize", function () {
+				positionCanvas()
+			})
+
+			window.addEventListener("vrdisplaypresentchange", function () {
+				if (!vrDisplay.isPresenting) {
+					onNormalScene()
+				}
 			})
 		}
 
@@ -223,46 +249,16 @@ window.drawVr = function (imageItem, canvasWrapper, is3D) {
 							presentButton.addEventListener('click', present, false)
 						}
 					}
-				})
-			} catch (e) { }
-		}
 
-		if (typeof imageItem === "string") {
-			let newimg = new window.Image()
-			newimg.onload = function () {
-				setImages(newimg).then(function () {
-					if (isPresenting) {
-						onPresent()
-					} else {
-						onNormalScene()
+					if (!vrDisplay || !vrDisplay.getFrameData) {
+						reject()
 					}
 
-					respond(subscribe)
+					run()
 				})
-			}
-			newimg.src = imageItem
-		} else {
-			window.imageReader(imageItem).then(function (newimg) {
-				setImages(newimg.img).then(function () {
-					if (isPresenting) {
-						onPresent()
-					} else {
-						onNormalScene()
-					}
-					respond(subscribe)
-				})
-			})
+			} catch (e) {
+				reject()
+			 }
 		}
-
-
-		window.addEventListener("resize", function () {
-			positionCanvas()
-		})
-
-		window.addEventListener("vrdisplaypresentchange", function () {
-			if (!vrDisplay.isPresenting) {
-				onNormalScene()
-			}
-		})
 	})
 }
