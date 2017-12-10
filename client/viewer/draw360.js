@@ -31,6 +31,7 @@ window.draw360 = function (imageItem, canvasWrapper) {
 			camera.position.y = distance * Math.cos(phi)
 			camera.position.z = distance * Math.sin(phi) * Math.sin(theta)
 			camera.lookAt(scene.position)
+			controls.update()
 			renderer.render(scene, camera)
 
 			subscriptions.forEach(function (cb) {
