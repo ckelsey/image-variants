@@ -1,6 +1,12 @@
 window.drawVr = function (imageItem, canvasWrapper, is3D) {
-	return new Promise(function (respond) {
+	return new Promise(function (respond, reject) {
 		canvasWrapper.innerHTML = ""
+
+		if (!vrDisplay || !vrDisplay.getFrameData) {
+			return reject()
+		}
+
+		console.log(vrDisplay, vrDisplay.getFrameData );
 
 		var glAttribs = {
 			antialias: true,
