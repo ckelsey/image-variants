@@ -56,8 +56,8 @@
 		<div id="canvas_wrapper"></div>
 	</div>
 	<div>
-		<input type="text" id="url_input" value="https://i.imgur.com/fQAdxqU.jpg" style="background: #fff; padding: 7px;">
-		<button id="url_upload">Get from url</button>
+		<!-- <input type="text" id="url_input" value="https://i.imgur.com/fQAdxqU.jpg" style="background: #fff; padding: 7px;">
+		<button id="url_upload">Get from url</button> -->
 		<input type="file" id="file_input" style="background: #fff; padding: 7px;">
 		<span id="status"></span>
 		<button id="upload" style="display: none;">Upload</button>
@@ -263,45 +263,45 @@
 			})
 		}, false)
 
-		document.getElementById("url_upload").onclick = function(){
-			statusMessage.textContent = "Drawing"
-			var canvasWrapper = document.getElementById("canvas_wrapper")
-			var new_canvasWrapper = canvasWrapper.cloneNode(true);
-			canvasWrapper.parentNode.replaceChild(new_canvasWrapper, canvasWrapper);
-			// new_canvasWrapper.setAttribute("crossOrigin", "Anonymous")
+		// document.getElementById("url_upload").onclick = function(){
+		// 	statusMessage.textContent = "Drawing"
+		// 	var canvasWrapper = document.getElementById("canvas_wrapper")
+		// 	var new_canvasWrapper = canvasWrapper.cloneNode(true);
+		// 	canvasWrapper.parentNode.replaceChild(new_canvasWrapper, canvasWrapper);
+		// 	// new_canvasWrapper.setAttribute("crossOrigin", "Anonymous")
 
-			draw2D(document.getElementById("url_input").value, new_canvasWrapper, true).then(function(){
-				statusMessage.textContent = ""
-				uploadBtn.style.display = "inline"
-				dimensions.style.display = "flex"
+		// 	draw2D(document.getElementById("url_input").value, new_canvasWrapper, true).then(function(){
+		// 		statusMessage.textContent = ""
+		// 		uploadBtn.style.display = "inline"
+		// 		dimensions.style.display = "flex"
 
-				ckropper.init(document.querySelector("#canvas_wrapper canvas"), {
-					minWidth: 300,
-					minHeight: 100
-				})
+		// 		ckropper.init(document.querySelector("#canvas_wrapper canvas"), {
+		// 			minWidth: 300,
+		// 			minHeight: 100
+		// 		})
 
-				ckropper.onUpdate(function (data) {
-					x1 = data.x1
-					x2 = data.x2
-					y1 = data.y1
-					y2 = data.y2
-					x1Text.textContent = data.x1.toFixed(2) + "%"
-					x2Text.textContent = data.x2.toFixed(2) + "%"
-					y1Text.textContent = data.y1.toFixed(2) + "%"
-					y2Text.textContent = data.y2.toFixed(2) + "%"
-				})
+		// 		ckropper.onUpdate(function (data) {
+		// 			x1 = data.x1
+		// 			x2 = data.x2
+		// 			y1 = data.y1
+		// 			y2 = data.y2
+		// 			x1Text.textContent = data.x1.toFixed(2) + "%"
+		// 			x2Text.textContent = data.x2.toFixed(2) + "%"
+		// 			y1Text.textContent = data.y1.toFixed(2) + "%"
+		// 			y2Text.textContent = data.y2.toFixed(2) + "%"
+		// 		})
 
-				ckropper.show()
+		// 		ckropper.show()
 
-				if (!downloadEventAdded) {
-					document.getElementById("download_screen").addEventListener("click", function () {
-						ckropper.screenshotDownload()
-					})
-				}
-			}, function(err){
-				console.log(err)
-			})
-		}
+		// 		if (!downloadEventAdded) {
+		// 			document.getElementById("download_screen").addEventListener("click", function () {
+		// 				ckropper.screenshotDownload()
+		// 			})
+		// 		}
+		// 	}, function(err){
+		// 		console.log(err)
+		// 	})
+		// }
 
 	</script> </body>
 
