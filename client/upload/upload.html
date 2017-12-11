@@ -94,6 +94,7 @@
 		<p>Y2:
 			<b id="y2">10%</b>
 		</p>
+		<p><button id="download_screen">Download screenshot</button></p>
 	</div>
 	<div id="images" style="display: none; align-items: center; justify-content: space-evenly">
 		<p>Large:
@@ -153,6 +154,7 @@
 		var dimensions = document.getElementById("dimensions")
 		var images = document.getElementById("images")
 		var x1 = 10, x2 = 10, y1 = 10, y2 = 10, sourceHeight,sourceWidth,viewHeight,viewWidth,pan,tilt,zoom
+		var downloadEventAdded
 
 		function drawCanvas(file) {
 
@@ -209,6 +211,12 @@
 					})
 
 					ckropper.show()
+
+					if(!downloadEventAdded){
+						document.getElementById("download_screen").addEventListener("click", function(){
+							ckropper.screenshotDownload()
+						})
+					}
 				})
 			}, function () {
 
