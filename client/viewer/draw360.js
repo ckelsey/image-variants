@@ -48,8 +48,8 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 					zoom: distance,
 					sourceWidth: canvasWrapper.offsetWidth,
 					sourceHeight: canvasWrapper.offsetHeight,
-					viewWidth: canvasWrapper.offsetWidth,
-					viewHeight: canvasWrapper.offsetHeight
+					viewWidth: canvasWrapper.offsetWidth * window.devicePixelRatio,
+					viewHeight: canvasWrapper.offsetHeight * window.devicePixelRatio
 				})
 			})
 		}

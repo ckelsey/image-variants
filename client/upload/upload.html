@@ -56,6 +56,8 @@
 		<div id="canvas_wrapper"></div>
 	</div>
 	<div>
+		<input type="text" id="url_input" value="https://i.imgur.com/fQAdxqU.jpg" style="background: #fff; padding: 7px;">
+		<button id="url_upload">Get from url</button>
 		<input type="file" id="file_input" style="background: #fff; padding: 7px;">
 		<span id="status"></span>
 		<button id="upload" style="display: none;">Upload</button>
@@ -70,29 +72,23 @@
 		<p>Zoom:
 			<b id="zoom"></b>
 		</p>
-		<p>Source width:
-			<b id="source_width"></b>
-		</p>
-		<p>Source height:
-			<b id="source_height"></b>
-		</p>
 		<p>View width:
 			<b id="view_width"></b>
 		</p>
 		<p>View height:
 			<b id="view_height"></b>
 		</p>
-		<p>X1:
-			<b id="x1">10%</b>
+		<p>Crop X:
+			<b id="x">10%</b>
 		</p>
-		<p>X2:
-			<b id="x2">10%</b>
+		<p>Crop Y:
+			<b id="y">10%</b>
 		</p>
-		<p>Y1:
-			<b id="y1">10%</b>
+		<p>Crop Width:
+			<b id="w">10%</b>
 		</p>
-		<p>Y2:
-			<b id="y2">10%</b>
+		<p>Crop Height:
+			<b id="h">10%</b>
 		</p>
 		<p><button id="download_screen">Download screenshot</button></p>
 	</div>
@@ -143,17 +139,15 @@
 		var panText = document.getElementById("pan")
 		var tiltText = document.getElementById("tilt")
 		var zoomText = document.getElementById("zoom")
-		var sourceWidthText = document.getElementById("source_width")
-		var sourceHeightText = document.getElementById("source_height")
 		var viewWidthText = document.getElementById("view_width")
 		var viewHeightText = document.getElementById("view_height")
-		var x1Text = document.getElementById("x1")
-		var x2Text = document.getElementById("x2")
-		var y1Text = document.getElementById("y1")
-		var y2Text = document.getElementById("y2")
+		var xText = document.getElementById("x")
+		var yText = document.getElementById("y")
+		var wText = document.getElementById("w")
+		var hText = document.getElementById("h")
 		var dimensions = document.getElementById("dimensions")
 		var images = document.getElementById("images")
-		var x1 = 10, x2 = 10, y1 = 10, y2 = 10, sourceHeight,sourceWidth,viewHeight,viewWidth,pan,tilt,zoom
+		var cropX, cropY, cropW, cropH, viewH, viewW, pan, tilt, zoom
 		var downloadEventAdded
 
 		function drawCanvas(file) {
@@ -172,9 +166,9 @@
 				if (meta["360"]) {
 					method = draw360(file, new_canvasWrapper)
 				} else if (meta["3d"]) {
-					method = draw3D(file, new_canvasWrapper, true)
+					method = draw3D(file, new_canvasWrapper)
 				} else {
-					method = draw2D(file, new_canvasWrapper, true)
+					method = draw2D(file, new_canvasWrapper)
 				}
 
 				method.then(function (onUpdate) {
@@ -188,8 +182,6 @@
 						pan = panText.textContent = data.pan.toFixed(2)
 						tilt = tiltText.textContent = data.tilt.toFixed(2)
 						zoom = zoomText.textContent = data.zoom.toFixed(2)
-						sourceHeight = sourceHeightText.textContent = Math.round(data.sourceHeight)
-						sourceWidth = sourceWidthText.textContent = Math.round(data.sourceWidth)
 						viewHeight = viewHeightText.textContent = Math.round(data.viewHeight)
 						viewWidth = viewWidthText.textContent = Math.round(data.viewWidth)
 					})
@@ -199,15 +191,17 @@
 						minHeight: 100
 					})
 
+					var cropData = ckropper.getCoordinates()
+					xText.textContent = cropX = Math.round(cropData.x)
+					yText.textContent = cropY = Math.round(cropData.y)
+					wText.textContent = cropWidth = Math.round(cropData.width)
+					hText.textContent = cropHeight = Math.round(cropData.height)
+
 					ckropper.onUpdate(function (data) {
-						x1 = data.x1
-						x2 = data.x2
-						y1 = data.y1
-						y2 = data.y2
-						x1Text.textContent = data.x1.toFixed(2) + "%"
-						x2Text.textContent = data.x2.toFixed(2) + "%"
-						y1Text.textContent = data.y1.toFixed(2) + "%"
-						y2Text.textContent = data.y2.toFixed(2) + "%"
+						xText.textContent = cropX = Math.round(data.x)
+						yText.textContent = cropY = Math.round(data.y)
+						wText.textContent = cropWidth = Math.round(data.width)
+						hText.textContent = cropHeight = Math.round(data.height)
 					})
 
 					ckropper.show()
@@ -221,7 +215,6 @@
 			}, function () {
 
 				statusMessage.textContent = "Not a valid GeForce image"
-				uploadBtn.style.display = "none"
 				dimensions.style.display = "none"
 				input.value = null
 			})
@@ -233,14 +226,21 @@
 		}, false)
 
 		uploadBtn.addEventListener("click", function () {
-			uploadBtn.style.display = "none"
+			// uploadBtn.style.display = "none"
+
+			var cropData = ckropper.getCoordinates()
 
 			upload(input.files[0], {
 
-				x1, x2, y1, y2,
-				sourceHeight,sourceWidth,
-				viewHeight, viewWidth,
-				pan, tilt, zoom
+				x: cropData.x,
+				y: cropData.y,
+				width: cropData.width,
+				height: cropData.height,
+				viewHeight: viewHeight,
+				viewWidth: viewWidth,
+				pan: pan,
+				tilt: tilt,
+				zoom: zoom
 
 			}, function (uploaded) {
 
@@ -249,7 +249,7 @@
 			}).then(function (res) {
 
 				statusMessage.textContent = ""
-				uploadBtn.style.display = "none"
+				// uploadBtn.style.display = "none"
 				images.style.display = "flex"
 				large.innerHTML = `<a target="_blank" href="` + res.result.urls.large + `"><img src="` + res.result.urls.large + `"></a>`
 				small.innerHTML = `<a target="_blank" href="` + res.result.urls.small + `"><img src="` + res.result.urls.small + `"></a>`
@@ -257,11 +257,51 @@
 
 			}, function (err) {
 
-				uploadBtn.style.display = "none"
+				// uploadBtn.style.display = "none"
 				statusMessage.textContent = "Error " + JSON.stringify(err)
 
 			})
 		}, false)
+
+		document.getElementById("url_upload").onclick = function(){
+			statusMessage.textContent = "Drawing"
+			var canvasWrapper = document.getElementById("canvas_wrapper")
+			var new_canvasWrapper = canvasWrapper.cloneNode(true);
+			canvasWrapper.parentNode.replaceChild(new_canvasWrapper, canvasWrapper);
+			// new_canvasWrapper.setAttribute("crossOrigin", "Anonymous")
+
+			draw2D(document.getElementById("url_input").value, new_canvasWrapper, true).then(function(){
+				statusMessage.textContent = ""
+				uploadBtn.style.display = "inline"
+				dimensions.style.display = "flex"
+
+				ckropper.init(document.querySelector("#canvas_wrapper canvas"), {
+					minWidth: 300,
+					minHeight: 100
+				})
+
+				ckropper.onUpdate(function (data) {
+					x1 = data.x1
+					x2 = data.x2
+					y1 = data.y1
+					y2 = data.y2
+					x1Text.textContent = data.x1.toFixed(2) + "%"
+					x2Text.textContent = data.x2.toFixed(2) + "%"
+					y1Text.textContent = data.y1.toFixed(2) + "%"
+					y2Text.textContent = data.y2.toFixed(2) + "%"
+				})
+
+				ckropper.show()
+
+				if (!downloadEventAdded) {
+					document.getElementById("download_screen").addEventListener("click", function () {
+						ckropper.screenshotDownload()
+					})
+				}
+			}, function(err){
+				console.log(err)
+			})
+		}
 
 	</script> </body>
 

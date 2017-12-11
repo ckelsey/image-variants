@@ -50,7 +50,7 @@ screenshotCanvas(type, quality) => canvas element
 */
 
 window.ckropper = {
-	ver: "1.0.2",
+	ver: "2.0.0",
 	element: null,
 	data: {
 		mousemove: false,
@@ -69,11 +69,14 @@ window.ckropper = {
 	},
 
 	getCoordinates: function () {
+		var w = window.ckropper.element.offsetWidth
+		var h = window.ckropper.element.offsetHeight
+
 		var data = {
-			x: (this.data.positions.x1 / 100) * this.element.offsetWidth,
-			y: (this.data.positions.y1 / 100) * this.element.offsetHeight,
-			width: this.element.offsetWidth - (((this.data.positions.x1 + this.data.positions.x2) / 100) * this.element.offsetWidth),
-			height: this.element.offsetHeight - (((this.data.positions.y1 + this.data.positions.y2) / 100) * this.element.offsetHeight)
+			x: (this.data.positions.x1 / 100) * w,
+			y: (this.data.positions.y1 / 100) * h,
+			width: w - (((this.data.positions.x1 + this.data.positions.x2) / 100) * w),
+			height: h - (((this.data.positions.y1 + this.data.positions.y2) / 100) * h)
 		}
 
 		for (var p in data) {
@@ -86,11 +89,14 @@ window.ckropper = {
 	},
 
 	getRelativeCoordinates: function () {
+		var w = window.ckropper.element.offsetWidth
+		var h = window.ckropper.element.offsetHeight
+
 		return {
 			x: this.data.positions.x1,
 			y: this.data.positions.y1,
-			width: ((this.element.offsetWidth - (((this.data.positions.x1 + this.data.positions.x2) / 100) * this.element.offsetWidth)) / this.element.offsetWidth) * 100,
-			height: ((this.element.offsetHeight - (((this.data.positions.y1 + this.data.positions.y2) / 100) * this.element.offsetHeight)) / this.element.offsetHeight) * 100
+			width: ((w - (((this.data.positions.x1 + this.data.positions.x2) / 100) * w)) / w) * 100,
+			height: ((h - (((this.data.positions.y1 + this.data.positions.y2) / 100) * h)) / h) * 100
 		}
 	},
 
@@ -283,7 +289,7 @@ window.ckropper = {
 				}
 
 				self.onUpdateCallbacks.forEach(function(cb) {
-					cb(self.data.positions, self.getCoordinates())
+					cb(self.getCoordinates())
 				})
 			}
 
@@ -306,6 +312,8 @@ window.ckropper = {
 		}
 
 		this.sizeWatcher = window.requestAnimationFrame(this.position)
+
+		self.getCoordinates()
 	},
 
 	position: function () {

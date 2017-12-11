@@ -14,15 +14,13 @@ window.draw2D = function (imageItem, canvasWrapper, fill) {
 		function sendUpdate() {
 			subscriptions.forEach(function (cb) {
 				cb({
-					pan: image.oCoords.tl.x < 0 ? image.oCoords.tl.x : 0,
-					tilt: image.oCoords.tl.y < 0 ? image.oCoords.tl.y : 0,
+					// pan: image.oCoords.tl.x < 0 ? image.oCoords.tl.x * window.devicePixelRatio : 0,
+					// tilt: image.oCoords.tl.y < 0 ? image.oCoords.tl.y * window.devicePixelRatio : 0,
+					pan: image.oCoords.tl.x * window.devicePixelRatio,
+					tilt: image.oCoords.tl.y * window.devicePixelRatio,
 					zoom: zoom,
-					sourceWidth: image.width,
-					sourceHeight: image.height,
-					viewWidth: canvasWrapper.offsetWidth,
-					viewHeight: canvasWrapper.offsetHeight
-					// viewWidth: image.oCoords.tl.x < 0 ? canvasWrapper.offsetWidth : canvasWrapper.offsetWidth - (image.oCoords.tl.x * 2),
-					// viewHeight: image.oCoords.tl.y < 0 ? canvasWrapper.offsetHeight : canvasWrapper.offsetHeight - (image.oCoords.tl.y * 2),
+					viewWidth: canvasWrapper.offsetWidth * window.devicePixelRatio,
+					viewHeight: canvasWrapper.offsetHeight * window.devicePixelRatio
 				})
 			})
 		}
@@ -33,6 +31,7 @@ window.draw2D = function (imageItem, canvasWrapper, fill) {
 			}
 
 			let method = fill ? 'max' : 'min'
+			method = "min"
 
 			return Math[method](canvasWrapper.offsetWidth / image.width, canvasWrapper.offsetHeight / image.height)
 		}
