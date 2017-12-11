@@ -35,6 +35,7 @@ ckropper.getRelativeCoordinates()
 */
 
 window.ckropper = {
+	ver: "1.0.1",
 	element: null,
 	data: {
 		mousemove: false,
@@ -53,12 +54,20 @@ window.ckropper = {
 	},
 
 	getCoordinates: function () {
-		return {
+		var data = {
 			x: (this.data.positions.x1 / 100) * this.element.offsetWidth,
 			y: (this.data.positions.y1 / 100) * this.element.offsetHeight,
 			width: this.element.offsetWidth - (((this.data.positions.x1 + this.data.positions.x2) / 100) * this.element.offsetWidth),
 			height: this.element.offsetHeight - (((this.data.positions.y1 + this.data.positions.y2) / 100) * this.element.offsetHeight)
 		}
+
+		for (var p in data) {
+			if (data[p]) {
+				data[p] = data[p] * window.devicePixelRatio
+			}
+		}
+
+		return data
 	},
 
 	getRelativeCoordinates: function () {
@@ -70,8 +79,56 @@ window.ckropper = {
 		}
 	},
 
-	screenshot: function () {
-		var ctx = document.createElement("canvas").getContext("2d")
+	screenshotData: function (type, quality) {
+		if (!type) {
+			type = "image/jpeg"
+		}
+
+		if (!quality) {
+			quality = 0.92
+		}
+
+		return this.screenshotCanvas().toDataURL(type, quality)
+	},
+
+	screenshotImage: function (cb, type, quality) {
+		if (!type) {
+			type = "image/jpeg"
+		}
+
+		if (!quality) {
+			quality = 0.92
+		}
+
+		var img = new window.Image()
+		img.onload = function () {
+			cb(img)
+		}
+		img.src = this.screenshotData(type, quality)
+	},
+
+	screenshotDownload: function (type, quality) {
+		if (!type) {
+			type = "image/jpeg"
+		}
+
+		if (!quality) {
+			quality = 0.92
+		}
+
+		var a = window.document.createElement("a")
+		a.download = true
+		a.href = this.screenshotData(type, quality)
+		a.click()
+	},
+
+	screenshotCanvas: function () {
+		var coords = this.getCoordinates();
+		var ctx = window.document.createElement("canvas").getContext("2d")
+		ctx.canvas.width = coords.width
+		ctx.canvas.height = coords.height
+		ctx.drawImage(this.element, coords.x, coords.y, coords.width, coords.height, 0, 0, coords.width, coords.height)
+		return ctx.canvas
 	},
 
 	init: function (el) {
