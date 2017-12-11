@@ -107,6 +107,7 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 					ctxTop.canvas.height = _img.naturalHeight / 2
 					ctxTop.drawImage(_img, 0, 0)
 					img = ctxTop.canvas
+					img.setAttribute("crossOrigin", "Anonymous")
 					resolve(img)
 				} else {
 					img = _img
@@ -143,6 +144,7 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 			renderer.setSize(canvasWrapper.offsetWidth, canvasWrapper.offsetHeight)
 			canvasWrapper.appendChild(renderer.domElement)
 			renderer.domElement.preserveDrawingBuffer = true
+			renderer.domElement.setAttribute("crossOrigin", "Anonymous")
 
 			scene = new window.THREE.Scene()
 
@@ -181,6 +183,7 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 						respond(subscribe)
 					})
 				}
+				newimg.setAttribute("crossOrigin", "Anonymous")
 				newimg.src = imageItem
 			} else if (imageItem instanceof window.HTMLImageElement) {
 				setImages(imageItem).then(function () {
