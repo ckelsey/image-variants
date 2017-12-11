@@ -1,11 +1,13 @@
 /*
 
-TO INIT, PASS IN CANVAS ELEMENT.
-IN THE FUTURE REV, THERE'LL BE OPTIONS LIKE MIN-WIDTH/HEIGHT
+TO INIT, PASS IN CANVAS ELEMENT. THERE ARE OPTIONS FOR MINIMUM WIDTH/HEIGHT
 
 ckropper.init(document.querySelector("#canvas_wrapper canvas"), {
-	minWidth: 400
+	minWidth: 100,
+	minHeight: 100
 })
+
+=====================================
 
 
 IF YOU NEED DATA WHEN ITS BEEN UPDATED
@@ -17,25 +19,38 @@ ckropper.onUpdate(function (data) {
 	y2 = data.y2
 })
 
+=====================================
+
 
 BY DEFAULT ITS HIDDEN, CALL THIS TO SHOW
 
 ckropper.show()
+
+=====================================
 
 
 CALL THIS TO GET COORDS IN PX
 
 ckropper.getCoordinates()
 
+=====================================
 
 CALL THIS TO GET COORDS IN %
 
 ckropper.getRelativeCoordinates()
 
+======================================
+
+THERE ARE A FEW OPTIONS TO GET A SCREENSHOT
+
+screenshotData(type, quality) => base64 string
+screenshotImage(callback, type, quality) => img element
+screenshotCanvas(type, quality) => canvas element
+
 */
 
 window.ckropper = {
-	ver: "1.0.1",
+	ver: "1.0.2",
 	element: null,
 	data: {
 		mousemove: false,
@@ -131,7 +146,7 @@ window.ckropper = {
 		return ctx.canvas
 	},
 
-	init: function (el) {
+	init: function (el, options) {
 		var self = this
 		this.container = window.document.createElement("div")
 		this.container.id = "ckrop-positioner"
@@ -170,44 +185,101 @@ window.ckropper = {
 				var height = ((e.y - (handleHeight / 2)) / self.element.offsetHeight) * 100 || 0
 				var width = ((e.x - (handleWidth / 2)) / self.element.offsetWidth) * 100 || 0
 
+				function checkHeight(y1, y2) {
+					if (!options.minHeight) {
+						return true
+					}
+					return self.element.offsetHeight - (((y1 + y2) / 100) * self.element.offsetHeight) > options.minHeight
+				}
+
+				function checkWidth(x1, x2) {
+					if (!options.minWidth) {
+						return true
+					}
+					return self.element.offsetWidth - (((x1 + x2) / 100) * self.element.offsetWidth) > options.minWidth
+				}
+
 				if (mode === 'north-handle') {
-					self.data.positions.y1 = height
-					self.container.querySelector("#north-space").style.height = self.data.positions.y1 + "%"
+
+					if (checkHeight(height, self.data.positions.y2)) {
+						self.data.positions.y1 = height
+						self.container.querySelector("#north-space").style.height = self.data.positions.y1 + "%"
+					}
+
 				} else if (mode === 'south-handle') {
+
 					height = 100 - height
-					self.data.positions.y2 = height
-					self.container.querySelector("#south-space").style.height = self.data.positions.y2 + "%"
+
+					if (checkHeight(height, self.data.positions.y1)) {
+						self.data.positions.y2 = height
+						self.container.querySelector("#south-space").style.height = self.data.positions.y2 + "%"
+					}
+
 				} else if (mode === 'east-handle') {
+
 					width = 100 - width
-					self.data.positions.x2 = width
-					self.container.querySelector("#east-space").style.width = self.data.positions.x2 + "%"
+
+					if (checkWidth(width, self.data.positions.x1)) {
+						self.data.positions.x2 = width
+						self.container.querySelector("#east-space").style.width = self.data.positions.x2 + "%"
+					}
+
 				} else if (mode === 'west-handle') {
-					self.data.positions.x1 = width
-					self.container.querySelector("#west-space").style.width = self.data.positions.x1 + "%"
+
+					if (checkWidth(width, self.data.positions.x2)) {
+						self.data.positions.x1 = width
+						self.container.querySelector("#west-space").style.width = self.data.positions.x1 + "%"
+					}
+
 				} else if (mode === 'north-east-handle') {
+
+					if (checkHeight(height, self.data.positions.y2)) {
+						self.data.positions.y1 = height
+						self.container.querySelector("#north-space").style.height = self.data.positions.y1 + "%"
+					}
+
 					width = 100 - width
-					self.data.positions.y1 = height
-					self.data.positions.x2 = width
-					self.container.querySelector("#north-space").style.height = self.data.positions.y1 + "%"
-					self.container.querySelector("#east-space").style.width = self.data.positions.x2 + "%"
+
+					if (checkWidth(width, self.data.positions.x1)) {
+						self.data.positions.x2 = width
+						self.container.querySelector("#east-space").style.width = self.data.positions.x2 + "%"
+					}
+
 				} else if (mode === 'north-west-handle') {
-					self.data.positions.y1 = height
-					self.data.positions.x1 = width
-					self.container.querySelector("#north-space").style.height = self.data.positions.y1 + "%"
-					self.container.querySelector("#west-space").style.width = self.data.positions.x1 + "%"
+					if (checkHeight(height, self.data.positions.y2)) {
+						self.data.positions.y1 = height
+						self.container.querySelector("#north-space").style.height = self.data.positions.y1 + "%"
+					}
+
+					if (checkWidth(width, self.data.positions.x2)) {
+						self.data.positions.x1 = width
+						self.container.querySelector("#west-space").style.width = self.data.positions.x1 + "%"
+					}
 				} else if (mode === 'south-east-handle') {
 					width = 100 - width
 					height = 100 - height
-					self.data.positions.y2 = height
-					self.data.positions.x2 = width
-					self.container.querySelector("#south-space").style.height = self.data.positions.y2 + "%"
-					self.container.querySelector("#east-space").style.width = self.data.positions.x2 + "%"
+
+					if (checkHeight(height, self.data.positions.y1)) {
+						self.container.querySelector("#south-space").style.height = self.data.positions.y2 + "%"
+						self.data.positions.y2 = height
+					}
+
+					if (checkWidth(width, self.data.positions.x1)) {
+						self.data.positions.x2 = width
+						self.container.querySelector("#east-space").style.width = self.data.positions.x2 + "%"
+					}
 				} else if (mode === 'south-west-handle') {
 					height = 100 - height
-					self.data.positions.y2 = height
-					self.data.positions.x1 = width
-					self.container.querySelector("#south-space").style.height = self.data.positions.y2 + "%"
-					self.container.querySelector("#west-space").style.width = self.data.positions.x1 + "%"
+
+					if (checkHeight(height, self.data.positions.y1)) {
+						self.data.positions.y2 = height
+						self.container.querySelector("#south-space").style.height = self.data.positions.y2 + "%"
+					}
+
+					if (checkWidth(width, self.data.positions.x2)) {
+						self.data.positions.x1 = width
+						self.container.querySelector("#west-space").style.width = self.data.positions.x1 + "%"
+					}
 				}
 
 				self.onUpdateCallbacks.forEach(function(cb) {
