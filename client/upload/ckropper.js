@@ -1,8 +1,14 @@
 /*
 
+TO INIT, PASS IN CANVAS ELEMENT.
+IN THE FUTURE REV, THERE'LL BE OPTIONS LIKE MIN-WIDTH/HEIGHT
+
 ckropper.init(document.querySelector("#canvas_wrapper canvas"), {
 	minWidth: 400
 })
+
+
+IF YOU NEED DATA WHEN ITS BEEN UPDATED
 
 ckropper.onUpdate(function (data) {
 	x1 = data.x1
@@ -11,7 +17,20 @@ ckropper.onUpdate(function (data) {
 	y2 = data.y2
 })
 
+
+BY DEFAULT ITS HIDDEN, CALL THIS TO SHOW
+
 ckropper.show()
+
+
+CALL THIS TO GET COORDS IN PX
+
+ckropper.getCoordinates()
+
+
+CALL THIS TO GET COORDS IN %
+
+ckropper.getRelativeCoordinates()
 
 */
 
@@ -20,10 +39,10 @@ window.ckropper = {
 	data: {
 		mousemove: false,
 		positions: {
-			y1: 0,
-			y2: 0,
-			x1: 0,
-			x2: 0
+			y1: 5,
+			y2: 5,
+			x1: 5,
+			x2: 5
 		},
 		elements: {}
 	},
@@ -180,6 +199,6 @@ window.ckropper = {
 	},
 
 	createHtml: function () {
-		return '<table><tr><td></td><td style="width:10px;"></td><td id="north-space" style="height: 5%;"></td><td style="width:10px"></td><td></td></tr><tr><td style="height:10px"></td><td id="north-west-handle" style="height:10px;cursor: nwse-resize;border-top: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;border-left: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: -5px; top: -5px;"></div></td><td id="north-handle" style="height:10px; background: transparent; cursor: ns-resize; border-top: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: 50%; top: -5px; margin-left: -5px;"></div></td><td id="north-east-handle" style="height:10px;cursor: nesw-resize;border-top: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;border-right: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: 5px; top: -5px;"></div></td><td style="height:10px"></td></tr><tr><td id="west-space" style="width: 5%;"></td><td id="west-handle" style="cursor: ew-resize;border-left: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;"><div class="handle" style="left: -5px; top: 50%; margin-top: -5px;"></div></td><td id="revealed-space" style="background: transparent;"></td><td id="east-handle" style="cursor: ew-resize;border-right: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;"><div class="handle" style="right: -5px;top: 50%; margin-top: -5px;"></div></td><td id="east-space" style="width: 5%;"></td></tr><tr><td style="height:10px"></td><td id="south-west-handle" style="height:10px;cursor: nesw-resize; background: transparent; border-bottom: 1px dotted rgba(255, 255, 255, 0.25); border-left: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: -5px; top: 5px;"></div></td><td id="south-handle" style="height:10px; cursor: ns-resize; border-bottom: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;"><div class="handle" style="left: 50%; top: 5px; margin-left: -5px;"></div></td><td id="south-east-handle" style="height:10px;cursor: nwse-resize;background: transparent; border-bottom: 1px dotted rgba(255, 255, 255, 0.25); border-right: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: 5px; top: 5px;"></div></td><td style="height:10px"></td></tr><tr><td></td><td></td><td id="south-space" style="height: 5%;"></td><td></td><td></td></tr></table><style>#ckrop-positioner{position: absolute;width: 100%;height: 100%;opacity: 1;top: 0px;left: 0px;pointer-events: none;display: none;transition: opacity .2s;}#ckrop-positioner table{width: 100%;height: 100%;border-collapse: collapse;}#ckrop-positioner table td{background: rgba(0, 0, 0, .42);pointer-events: all;}#ckrop-positioner table td#revealed-space{pointer-events: none;}#ckrop-positioner table td .handle{background: rgba(200, 200, 200, .75);box-shadow: inset 0px 0px 0px 1px rgba(50, 50, 50, .75);width: 10px;height: 10px;position: relative;border-radius: 2px;transition: transform .2s;}#ckrop-positioner table td:hover .handle{transform: scale(1.2);}#ckrop-positioner .positioner-cutout{position: absolute;background: rgba(62, 62, 62, 0.7);display: flex;pointer-events: all;}#ckrop-positioner .positioner-cutout.cutout-top,#ckrop-positioner .positioner-cutout.cutout-bottom{width: 100%;flex-direction: column;left: 0px;height: 10%;cursor: ns-resize;}#ckrop-positioner .positioner-cutout.cutout-left,#ckrop-positioner .positioner-cutout.cutout-right{top: 0px;height: 100%;flex-direction: row;min-width: 10px;cursor: ew-resize;width: 10%;}#ckrop-positioner .positioner-cutout.cutout-top{top: 0%;justify-content: flex-end;}#ckrop-positioner .positioner-cutout.cutout-bottom{bottom: 0%;justify-content: flex-start;}#ckrop-positioner .positioner-cutout.cutout-left{justify-content: flex-end;left: 0%;}#ckrop-positioner .positioner-cutout.cutout-right{justify-content: flex-start;right: 0%;}#ckrop-positioner .cutout-top .cutout-handle,#ckrop-positioner .cutout-bottom .cutout-handle,#ckrop-positioner .cutout-left .cutout-handle,#ckrop-positioner .cutout-right .cutout-handle{border-color: rgba(176, 176, 176, 0.38);border-style: dotted;border-width: 0px;}#ckrop-positioner .cutout-top .cutout-handle,#ckrop-positioner .cutout-bottom .cutout-handle{width: 100%;height: 5px;}#ckrop-positioner .cutout-top .cutout-handle{border-bottom-width: 1px;}#ckrop-positioner .cutout-bottom .cutout-handle{border-top-width: 1px;}#ckrop-positioner .cutout-left .cutout-handle,#ckrop-positioner .cutout-right .cutout-handle{width: 5px;height: 100%;}#ckrop-positioner .cutout-left .cutout-handle{border-right-width: 1px;}#ckrop-positioner .cutout-right .cutout-handle{border-left-width: 1px;}</style>'
+		return '<table><tr><td></td><td style="width:10px;"></td><td id="north-space" style="height: 5%;"></td><td style="width:10px"></td><td></td></tr><tr><td style="height:10px"></td><td id="north-west-handle" style="height:10px;cursor: nwse-resize;border-top: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;border-left: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: -5px; top: -5px;"></div></td><td id="north-handle" style="height:10px; background: transparent; cursor: ns-resize; border-top: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: 50%; top: -5px; margin-left: -5px;"></div></td><td id="north-east-handle" style="height:10px;cursor: nesw-resize;border-top: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;border-right: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: 5px; top: -5px;"></div></td><td style="height:10px"></td></tr><tr><td id="west-space" style="width: 5%;"></td><td id="west-handle" style="cursor: ew-resize;border-left: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;"><div class="handle" style="left: -5px; top: 50%; margin-top: -5px;"></div></td><td id="revealed-space" style="background: transparent;"></td><td id="east-handle" style="cursor: ew-resize;border-right: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;"><div class="handle" style="right: -5px;top: 50%; margin-top: -5px;"></div></td><td id="east-space" style="width: 5%;"></td></tr><tr><td style="height:10px"></td><td id="south-west-handle" style="height:10px;cursor: nesw-resize; background: transparent; border-bottom: 1px dotted rgba(255, 255, 255, 0.25); border-left: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: -5px; top: 5px;"></div></td><td id="south-handle" style="height:10px; cursor: ns-resize; border-bottom: 1px dotted rgba(255, 255, 255, 0.25);background: transparent;"><div class="handle" style="left: 50%; top: 5px; margin-left: -5px;"></div></td><td id="south-east-handle" style="height:10px;cursor: nwse-resize;background: transparent; border-bottom: 1px dotted rgba(255, 255, 255, 0.25); border-right: 1px dotted rgba(255, 255, 255, 0.25);"><div class="handle" style="left: 5px; top: 5px;"></div></td><td style="height:10px"></td></tr><tr><td></td><td></td><td id="south-space" style="height: 5%;"></td><td></td><td></td></tr></table><style>#ckrop-positioner{z-index: 9999999;position: absolute;width: 100%;height: 100%;opacity: 1;top: 0px;left: 0px;pointer-events: none;display: none;transition: opacity .2s;}#ckrop-positioner table{width: 100%;height: 100%;border-collapse: collapse;}#ckrop-positioner table td{background: rgba(0, 0, 0, .42);}#ckrop-positioner table td#north-west-handle, #ckrop-positioner table td#north-east-handle, #ckrop-positioner table td#north-handle,#ckrop-positioner table td#south-west-handle, #ckrop-positioner table td#south-east-handle, #ckrop-positioner table td#south-handle,#ckrop-positioner table td#west-handle, #ckrop-positioner table td#east-handle{pointer-events: all;}#ckrop-positioner table td#revealed-space{pointer-events: none;}#ckrop-positioner table td .handle{background: rgba(200, 200, 200, .75);box-shadow: inset 0px 0px 0px 1px rgba(50, 50, 50, .75);width: 10px;height: 10px;position: relative;border-radius: 2px;transition: transform .2s;}#ckrop-positioner table td:hover .handle{transform: scale(1.2);}#ckrop-positioner .positioner-cutout{position: absolute;background: rgba(62, 62, 62, 0.7);display: flex;pointer-events: all;}#ckrop-positioner .positioner-cutout.cutout-top,#ckrop-positioner .positioner-cutout.cutout-bottom{width: 100%;flex-direction: column;left: 0px;height: 10%;cursor: ns-resize;}#ckrop-positioner .positioner-cutout.cutout-left,#ckrop-positioner .positioner-cutout.cutout-right{top: 0px;height: 100%;flex-direction: row;min-width: 10px;cursor: ew-resize;width: 10%;}#ckrop-positioner .positioner-cutout.cutout-top{top: 0%;justify-content: flex-end;}#ckrop-positioner .positioner-cutout.cutout-bottom{bottom: 0%;justify-content: flex-start;}#ckrop-positioner .positioner-cutout.cutout-left{justify-content: flex-end;left: 0%;}#ckrop-positioner .positioner-cutout.cutout-right{justify-content: flex-start;right: 0%;}#ckrop-positioner .cutout-top .cutout-handle,#ckrop-positioner .cutout-bottom .cutout-handle,#ckrop-positioner .cutout-left .cutout-handle,#ckrop-positioner .cutout-right .cutout-handle{border-color: rgba(176, 176, 176, 0.38);border-style: dotted;border-width: 0px;}#ckrop-positioner .cutout-top .cutout-handle,#ckrop-positioner .cutout-bottom .cutout-handle{width: 100%;height: 5px;}#ckrop-positioner .cutout-top .cutout-handle{border-bottom-width: 1px;}#ckrop-positioner .cutout-bottom .cutout-handle{border-top-width: 1px;}#ckrop-positioner .cutout-left .cutout-handle,#ckrop-positioner .cutout-right .cutout-handle{width: 5px;height: 100%;}#ckrop-positioner .cutout-left .cutout-handle{border-right-width: 1px;}#ckrop-positioner .cutout-right .cutout-handle{border-left-width: 1px;}</style>'
 	}
 }
