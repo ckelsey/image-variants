@@ -34,7 +34,11 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 			camera.position.y = distance * Math.cos(phi)
 			camera.position.z = distance * Math.sin(phi) * Math.sin(theta)
 			camera.lookAt(scene.position)
-			controls.update()
+
+			if (canDoVR) {
+				controls.update()
+			}
+
 			renderer.render(scene, camera)
 
 			subscriptions.forEach(function (cb) {
@@ -133,6 +137,7 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 		}
 
 		function run() {
+
 			renderer = new window.THREE.WebGLRenderer({ antialiasing: false, preserveDrawingBuffer: true })
 			renderer.setPixelRatio(window.devicePixelRatio)
 			renderer.setSize(canvasWrapper.offsetWidth, canvasWrapper.offsetHeight)
@@ -148,7 +153,9 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 			camera.aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight
 			camera.updateProjectionMatrix()
 
-			controls = new window.THREE.DeviceOrientationControls(camera)
+			if (canDoVR) {
+				controls = new window.THREE.DeviceOrientationControls(camera)
+			}
 
 			var geometry = new window.THREE.SphereGeometry(100, 100, 40)
 			geometry.applyMatrix(new window.THREE.Matrix4().makeScale(-1, 1, 1))
@@ -202,7 +209,19 @@ window.draw360 = function (imageItem, canvasWrapper, is3D) {
 		}
 
 
+		if (window.navigator.getVRDisplays) {
+			try {
+				window.navigator.getVRDisplays().then(function (displays) {
+					if (displays.length > 0) {
+						var vrDisplay = displays[0];
+						canDoVR = vrDisplay.capabilities.canPresent;
+					}
 
-		run()
+					run();
+				});
+			} catch (e) {
+				run();
+			}
+		}
 	})
 }
